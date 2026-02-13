@@ -171,12 +171,24 @@
             noBtn.style.display = "none";
             
             mainTitle.innerText = "Yêu Cún ❤️";
+            
             message.innerHTML = `
                 <span>Biết ngay là em thích mà mềm</span>
                 <span class="sub-message">(Moa moa chụt chụt)</span>
             `;
             
-            mainGif.src = "dong_y.gif";
+            // 1. Thay tên ảnh của bạn vào đây (ví dụ: anh-yeu.jpg)
+            mainGif.src = "ten-anh-cua-ban.jpg"; 
+
+            // 2. ĐOẠN STYLE BẠN VỪA HỎI NẰM Ở ĐÂY 👇
+            mainGif.style.width = "80%"; // Chỉnh độ rộng ảnh (80% khung)
+            mainGif.style.height = "auto"; // Chiều cao tự động
+            mainGif.style.objectFit = "cover"; 
+            mainGif.style.boxShadow = "0 10px 20px rgba(0,0,0,0.2)"; // Bóng đổ
+            mainGif.style.border = "5px solid white"; // Viền trắng
+            mainGif.style.borderRadius = "10px"; // Bo góc nhẹ cho đỡ sắc
+            mainGif.style.transform = "rotate(-3deg)"; // Xoay nghiêng nghệ thuật
+            
             createHearts();
         }
 
@@ -230,4 +242,5 @@
     </script>
 </body>
 </html>
+
 
