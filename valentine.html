@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gửi Cún Bel Mềm ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(180deg, #ffdee9 0%, #b5fffc 100%);
+            font-family: 'Nunito', sans-serif; overflow: hidden;
+        }
+        
+        .container {
+            text-align: center; background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px; 
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 90%;          
+            max-width: 400px;
+            min-height: 500px; /* Chiều cao tối thiểu */
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            color: #ff4757; font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem; margin: 0 0 10px 0; line-height: 1.2;
+            width: 100%;
+        }
+
+        .gif-area { 
+            width: 100%; display: flex; align-items: center; justify-content: center; 
+            flex-grow: 1; margin: 10px 0;
+        }
+        
+        .gif-area img { 
+            height: 180px; max-width: 100%; object-fit: contain; border-radius: 15px; 
+        }
+        
+        #message {
+            font-size: 1.2rem; color: #2f3542; width: 100%;
+            min-height: 80px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin-bottom: 20px; font-weight: 700;
+        }
+        
+        .sub-message { 
+            font-size: 1rem; color: #ff6b81; font-style: italic; margin-top: 8px;
+        }
+        
+        .buttons {
+            display: flex; justify-content: center; gap: 15px;
+            width: 100%; height: 60px; position: relative;
+        }
+        
+        /* --- NÚT ĐÃ ĐƯỢC KHÓA KÍCH THƯỚC --- */
+        button {
+            /* Fix cứng chiều rộng và chiều cao */
+            width: 140px; 
+            height: 50px;
+            
+            font-size: 1.1rem; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; font-family: 'Nunito', sans-serif;
+            transition: transform 0.1s; 
+            white-space: nowrap; /* Không xuống dòng */
+            display: flex; align-items: center; justify-content: center; /* Căn giữa chữ */
+            
+            /* Quan trọng: Ngăn nút bị co lại trên mobile */
+            flex-shrink: 0; 
+        }
+
+        #yesBtn {
+            background: #ff4757; color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            z-index: 20; 
+            position: absolute; left: 5%; bottom: 5px; /* Căn vị trí */
+        }
+        
+        #noBtn {
+            background: #ffe0e6; color: #ff4757;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: left 0s, top 0s; /* Bỏ transition vị trí để chạy nhanh hơn */
+            position: absolute; right: 5%; bottom: 5px; /* Căn vị trí */
+        }
+
+        .running {
+            position: fixed !important; 
+            z-index: 100;
+            /* Đảm bảo kích thước không đổi khi chạy */
+            width: 140px !important; 
+            height: 50px !important;
+        }
+
+        .heart {
+            position: fixed; color: #ff4757; animation: floatUp 4s linear infinite;
+            z-index: 5; pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="love.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <h1 id="mainTitle">Happy Valentine Day Cún Bel mềm moa moa</h1>
+        
+        <div class="gif-area">
+            <img id="mainGif" src="bat_dau.gif" alt="Cute Bear">
+        </div>
+
+        <div id="message">
+            <span> Mai là 14/2 rùi đó, đi chơi với anh nhó 🥺</span>
+        </div>
+
+        <div class="buttons" id="btnGroup">
+            <button id="yesBtn">Dạ có ạ</button>
+            <button id="noBtn">Hong</button>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const message = document.getElementById('message');
+        const mainGif = document.getElementById('mainGif');
+        const mainTitle = document.getElementById('mainTitle');
+        const btnGroup = document.getElementById('btnGroup');
+        const music = document.getElementById('bgMusic');
+
+        let yesCount = 0;
+        let noCount = 0;
+        let isRunning = false;
+
+        const noTexts = [
+            "Ơ đừng từ chối mà mềm ơi... 😭",
+            "Suy nghĩ lại đi mò... 🥺",
+            "Hong được đâu, bấm nút kia đi!",
+            "Ơ thế thì đố bắt được đấy! 😝"
+        ];
+
+        const yesTexts = [
+            "Ơ thử click No đê, hay lắm mềm 🤣",
+            "Thật đấy, thử click Hong đê, ngon lắm babi 😆",
+            "Vẫn chưa thử à? Thử đi mà! 😜"
+        ];
+
+        function moveNoBtn() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            // Trừ đi chiều rộng nút (140px) để không bị tràn
+            const newX = Math.random() * (w - 150); 
+            const newY = Math.random() * (h - 60);
+
+            noBtn.style.position = "fixed";
+            noBtn.style.left = newX + "px";
+            noBtn.style.top = newY + "px";
+        }
+
+        function showSuccess() {
+            btnGroup.style.display = "none";
+            noBtn.style.display = "none";
+            
+            mainTitle.innerText = "Yêu Cún ❤️";
+            message.innerHTML = `
+                <span>Biết ngay là em thích mà mềm</span>
+                <span class="sub-message">(Moa moa chụt chụt)</span>
+            `;
+            
+            mainGif.src = "dong_y.gif";
+            createHearts();
+        }
+
+        noBtn.addEventListener('click', () => {
+            music.play().catch(e => console.log("Music blocked"));
+
+            if (!isRunning) {
+                if (noCount < 3) {
+                    message.innerHTML = `<span>${noTexts[noCount]}</span>`;
+                    noCount++;
+                } else {
+                    message.innerHTML = `<span>${noTexts[3]}</span>`;
+                    isRunning = true;
+                    noBtn.classList.add('running');
+                    moveNoBtn();
+                }
+            } else {
+                moveNoBtn();
+            }
+        });
+
+        noBtn.addEventListener('mouseover', () => { if (isRunning) moveNoBtn(); });
+        noBtn.addEventListener('touchstart', (e) => { if (isRunning) { e.preventDefault(); moveNoBtn(); } });
+
+        yesBtn.addEventListener('click', () => {
+            music.play().catch(e => console.log("Music blocked"));
+            if (isRunning) {
+                showSuccess();
+            } else {
+                if (yesCount < yesTexts.length) {
+                    message.innerHTML = `<span>${yesTexts[yesCount]}</span>`;
+                    yesCount++;
+                } else {
+                    showSuccess();
+                }
+            }
+        });
+
+        function createHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = ['❤️', '💖', '💕', '🥰'][Math.floor(Math.random() * 4)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 5000);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
